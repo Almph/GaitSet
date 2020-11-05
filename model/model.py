@@ -40,14 +40,19 @@ class Model:
         self.test_source = test_source
 
         self.hidden_dim = hidden_dim
+        #线性全连接层的隐藏层数量。
         self.lr = lr
         self.hard_or_full_trip = hard_or_full_trip
+        #三元组损失的计算方法，trip是tripletloss的缩写。
         self.margin = margin
+        #三元组损失里的超参。
         self.frame_num = frame_num
+        #每个数据里抽几帧进行训练。
         self.num_workers = num_workers
         self.batch_size = batch_size
         self.model_name = model_name
         self.P, self.M = batch_size
+        #人数和每个人抽几个数据。
 
         self.restore_iter = restore_iter
         self.total_iter = total_iter
@@ -55,15 +60,19 @@ class Model:
         self.img_size = img_size
 
         self.encoder = SetNet(self.hidden_dim).float()
+        #提取特征的网络。
         self.encoder = nn.DataParallel(self.encoder)
         self.triplet_loss = TripletLoss(self.P * self.M, self.hard_or_full_trip, self.margin).float()
+        #第一个参数给出一个batch有多少个数据，第二个参数告诉三元组损失类型，第三个参数是超参。
         self.triplet_loss = nn.DataParallel(self.triplet_loss)
         self.encoder.cuda()
         self.triplet_loss.cuda()
+        #先并行，然后放到显卡上。
 
         self.optimizer = optim.Adam([
             {'params': self.encoder.parameters()},
         ], lr=self.lr)
+        #优化器的优化目标是整个网络的参数。
 
         self.hard_loss_metric = []
         self.full_loss_metric = []
@@ -72,6 +81,7 @@ class Model:
         self.mean_dist = 0.01
 
         self.sample_type = 'all'
+        #采样类型为all。
 
     def collate_fn(self, batch):
         batch_size = len(batch)

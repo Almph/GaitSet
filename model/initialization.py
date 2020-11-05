@@ -11,8 +11,11 @@ from .model import Model
 
 
 def initialize_data(config, train=False, test=False):
+    #这里传进来的train=True。
     print("Initializing data source...")
     train_source, test_source = load_data(**config['data'], cache=(train or test))
+    #双**星号表示把字典解包为key=value的形式传参给函数，要求key和函数的形参名能对应起来。
+    #这里cache必然是True，就是数据的缓存不管是训练还是测试都会做。
     if train:
         print("Loading training data...")
         train_source.load_all_data()
@@ -50,9 +53,14 @@ def initialize_model(config, train_source, test_source):
 
 
 def initialization(config, train=False, test=False):
+    #这里传进来的train为True。
     print("Initialzing...")
     WORK_PATH = config['WORK_PATH']
     os.chdir(WORK_PATH)
+    #切换到工作目录。
+    #也就是存放checkpoint的目录。
     os.environ["CUDA_VISIBLE_DEVICES"] = config["CUDA_VISIBLE_DEVICES"]
+    #环境的显卡数量。
     train_source, test_source = initialize_data(config, train, test)
+    #data按照train=True进行初始化。
     return initialize_model(config, train_source, test_source)

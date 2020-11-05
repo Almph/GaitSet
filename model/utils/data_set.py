@@ -10,12 +10,17 @@ import xarray as xr
 class DataSet(tordata.Dataset):
     def __init__(self, seq_dir, label, seq_type, view, cache, resolution):
         self.seq_dir = seq_dir
+        #每个数据所在的文件夹的列表。
         self.view = view
         self.seq_type = seq_type
         self.label = label
+
         self.cache = cache
+        #规定数据是否缓存。
         self.resolution = int(resolution)
         self.cut_padding = int(float(resolution)/64*10)
+        #图的两边切掉10像素宽度的黑条。
+
         self.data_size = len(self.label)
         self.data = [None] * self.data_size
         self.frame_set = [None] * self.data_size
@@ -55,6 +60,7 @@ class DataSet(tordata.Dataset):
     def __getitem__(self, index):
         # pose sequence sampling
         if not self.cache:
+            #如果数据不缓存，但一般都会缓存。
             data = [self.__loader__(_path) for _path in self.seq_dir[index]]
             frame_set = [set(feature.coords['frame'].values.tolist()) for feature in data]
             frame_set = list(set.intersection(*frame_set))
