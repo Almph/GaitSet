@@ -59,25 +59,30 @@ def load_data(dataset_path, resolution, dataset, pid_num, pid_shuffle, cache=Tru
         #[['000', '001', ..., '073'], ['074', '075', ..., '124']]
 
         os.makedirs('partition', exist_ok=True)
-        
+
         np.save(pid_fname, pid_list)
+        #把[['000', '001', ..., '073'], ['074', '075', ..., '124']]保存进文件partition/CASIA-B_73_False.npy里。
 
     pid_list = np.load(pid_fname)
+    #如果分好的列表已经存好了，则直接加载。
+
     train_list = pid_list[0]
+    #['001', '002', ..., '073']。
     test_list = pid_list[1]
+    #['074', '075', ..., '124']。
+
     train_source = DataSet(
         [seq_dir[i] for i, l in enumerate(label) if l in train_list],
         [label[i] for i, l in enumerate(label) if l in train_list],
         [seq_type[i] for i, l in enumerate(label) if l in train_list],
-        [view[i] for i, l in enumerate(label)
-         if l in train_list],
+        [view[i] for i, l in enumerate(label) if l in train_list],
         cache, resolution)
+
     test_source = DataSet(
         [seq_dir[i] for i, l in enumerate(label) if l in test_list],
         [label[i] for i, l in enumerate(label) if l in test_list],
         [seq_type[i] for i, l in enumerate(label) if l in test_list],
-        [view[i] for i, l in enumerate(label)
-         if l in test_list],
+        [view[i] for i, l in enumerate(label) if l in test_list],
         cache, resolution)
 
     return train_source, test_source
