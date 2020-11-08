@@ -12,7 +12,6 @@ from .model import Model
 
 def initialize_data(config, train=False, test=False):
     #这里传进来的train=True。
-    #
     print("Initializing data source...")
     train_source, test_source = load_data(**config['data'], cache=(train or test))
     #双**星号表示把字典解包为key=value的形式传参给函数，要求key和函数的形参名能对应起来。
@@ -22,6 +21,8 @@ def initialize_data(config, train=False, test=False):
         print("Loading training data...")
         train_source.load_all_data()
         #加载数据缓存好，这里其实与cache参数无关，不管真假都会把所有数据都加载一遍。
+        #调用该方法后所有数据被存入.data属性里（是一个五维大列表）。
+        #[[xrarray(nparray(64*44))], [], ..., []]。
 
     if test:
         print("Loading test data...")

@@ -56,14 +56,16 @@ class Model:
 
         self.restore_iter = restore_iter
         self.total_iter = total_iter
+        #这两个变量尚不清楚。
 
         self.img_size = img_size
+        #这里用了默认的参数64。
 
         self.encoder = SetNet(self.hidden_dim).float()
         #提取特征的网络。
         self.encoder = nn.DataParallel(self.encoder)
         self.triplet_loss = TripletLoss(self.P * self.M, self.hard_or_full_trip, self.margin).float()
-        #第一个参数给出一个batch有多少个数据，第二个参数告诉三元组损失类型，第三个参数是超参。
+        #第一个参数给出一个batch有多少个数据，第二个参数告诉三元组损失类型，第三个参数是计算loss时的超参。
         self.triplet_loss = nn.DataParallel(self.triplet_loss)
         self.encoder.cuda()
         self.triplet_loss.cuda()
@@ -78,47 +80,79 @@ class Model:
         self.full_loss_metric = []
         self.full_loss_num = []
         self.dist_list = []
+        #记录loss和dist的列表。
+
         self.mean_dist = 0.01
+        #平均距离？
 
         self.sample_type = 'all'
         #采样类型为all。
 
     def collate_fn(self, batch):
         batch_size = len(batch)
+        #8*16=128个数据。
         feature_num = len(batch[0][0])
+        #len(data)，值是1，data是[xarray]，
+        #就看data里面存着几个特征，这里只有一个silhouette特征。
         seqs = [batch[i][0] for i in range(batch_size)]
+        #五维列表，元素是data（[xarray]）。
         frame_sets = [batch[i][1] for i in range(batch_size)]
+        #二维列表，元素是frame_set=['001', '002', ..., '']，长度不定。
         view = [batch[i][2] for i in range(batch_size)]
+        #一维列表，记录当前batch数据的view。
         seq_type = [batch[i][3] for i in range(batch_size)]
+        #同上，记录seq_type。
         label = [batch[i][4] for i in range(batch_size)]
+        #同上，记录label。
         batch = [seqs, view, seq_type, label, None]
 
         def select_frame(index):
             sample = seqs[index]
+            #取出一个特定的数据，四维。
             frame_set = frame_sets[index]
+            #取出该数据的帧数。
             if self.sample_type == 'random':
                 frame_id_list = random.choices(frame_set, k=self.frame_num)
+                #从给定的数据中抽出30帧。
                 _ = [feature.loc[frame_id_list].values for feature in sample]
+                #这里的feature是个xarray。
             else:
                 _ = [feature.values for feature in sample]
+                #如果不是随机取帧，如前默认为'all'，则取所有的帧。
+                #.values方法仅取出值。
+                #_是个四维列表，列表壳子里面是一个三维nparray。
             return _
 
         seqs = list(map(select_frame, range(len(seqs))))
+        #seqs的内容物从xarray变成了nparray，仍然是五维的。
+        #len(seqs)*1*frame_num*64*44。
 
         if self.sample_type == 'random':
             seqs = [np.asarray([seqs[i][j] for i in range(batch_size)]) for j in range(feature_num)]
+            #seqs仍为五维，列表壳子里装着一个nparray，这个nparray是四维的。
+            #1*batch_size*frame_num*64*44，第一个1是因为j只能为0。
         else:
+            #采样模式为'all'时。
             gpu_num = min(torch.cuda.device_count(), batch_size)
             batch_per_gpu = math.ceil(batch_size / gpu_num)
+            #每个gpu上的batch数量。
             batch_frames = [[
                                 len(frame_sets[i])
                                 for i in range(batch_per_gpu * _, batch_per_gpu * (_ + 1))
                                 if i < batch_size
                                 ] for _ in range(gpu_num)]
+            #[[45, 56, ..., 64], [], ..., []]
+            #长度为gpu数量，每个元素是一个列表，长度为batch_per_gpu，存着一张gpu上所有数据的帧数。
+
             if len(batch_frames[-1]) != batch_per_gpu:
+                #即gpu_num无法整除batch_size时，最后一张gpu上的batch数量会比batch_per_gpu少。
                 for _ in range(batch_per_gpu - len(batch_frames[-1])):
                     batch_frames[-1].append(0)
+                    #把帧数用0补上，让最后一张GPU上数据的数量看起来也是batch_per_gpu。
+
             max_sum_frame = np.max([np.sum(batch_frames[_]) for _ in range(gpu_num)])
+            #哪张GPU上要跑的数据的帧数最多呢？
+
             seqs = [[
                         np.concatenate([
                                            seqs[i][j]
@@ -126,6 +160,9 @@ class Model:
                                            if i < batch_size
                                            ], 0) for _ in range(gpu_num)]
                     for j in range(feature_num)]
+            #拼接操作会把列表壳子吃掉，返回(batch_per_gpu个frame_num的和)*64*44的三维输出。
+            #1*gpu_num*(batch_per_gpu个frame_num的和)*64*44。
+
             seqs = [np.asarray([
                                    np.pad(seqs[j][_],
                                           ((0, max_sum_frame - seqs[j][_].shape[0]), (0, 0), (0, 0)),
@@ -133,9 +170,15 @@ class Model:
                                           constant_values=0)
                                    for _ in range(gpu_num)])
                     for j in range(feature_num)]
+            #1*gpu_num*max_sum_frame*64*44。
+            #(batch_per_gpu个frame_num的和)不足max_sum_frame的用全是0的帧补齐。
+
             batch[4] = np.asarray(batch_frames)
+            #给之前预设为None的位置赋值。
 
         batch[0] = seqs
+        #采样模式如为random，seqs是1*batch_size*frame_num*64*44。
+        #采样模式如为all，seqs是1*gpu_num*max_sum_frame*64*44。
         return batch
 
     def fit(self):

@@ -84,7 +84,6 @@ def load_data(dataset_path, resolution, dataset, pid_num, pid_shuffle, cache=Tru
         [seq_type[i] for i, l in enumerate(label) if l in test_list],
         [view[i] for i, l in enumerate(label) if l in test_list],
         cache, resolution)
-        #因为已经默认了要缓存数据。
-        #所以上面两个数据集的.data属性（五维列表datasize*1*frame_num*64*44）中已经存好了所有的数据。
+        
 
     return train_source, test_source

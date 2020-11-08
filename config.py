@@ -22,6 +22,7 @@ conf = {
         'margin': 0.2,
         'num_workers': 3,
         'frame_num': 30,
+        #每个数据中取出多少帧进行训练。
         'model_name': 'GaitSet',
     },
 }
