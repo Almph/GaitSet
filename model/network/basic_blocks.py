@@ -21,8 +21,10 @@ class SetBlock(nn.Module):
             self.pool2d = nn.MaxPool2d(2)
     def forward(self, x):
         n, s, c, h, w = x.size()
+        #在SetNet的forward方法的调用中，x的格式为batch_size*frame_num*1*64*44。
         x = self.forward_block(x.view(-1,c,h,w))
         if self.pooling:
             x = self.pool2d(x)
         _, c, h, w = x.size()
+        #这里chw和前面的值可能已经不一样了。
         return x.view(n, s, c, h ,w)

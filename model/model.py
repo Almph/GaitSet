@@ -87,6 +87,7 @@ class Model:
 
         self.sample_type = 'all'
         #采样类型为all。
+        #这里是默认为all，但后面实际训练时又设为random。
 
     def collate_fn(self, batch):
         batch_size = len(batch)
@@ -108,7 +109,7 @@ class Model:
 
         def select_frame(index):
             sample = seqs[index]
-            #取出一个特定的数据，四维。
+            #取出一个特定的数据，sample是四维的。
             frame_set = frame_sets[index]
             #取出该数据的帧数。
             if self.sample_type == 'random':
@@ -184,11 +185,18 @@ class Model:
     def fit(self):
         if self.restore_iter != 0:
             self.load(self.restore_iter)
+            #加载对应的checkpoint。
+            #加载网络参数和优化器参数。
 
         self.encoder.train()
         self.sample_type = 'random'
+        #采样方法设为random。
+        #这个参数不允许从外部修改，所以是指定使用random采样。
+
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = self.lr
+            #param_group是一个字典，带有键'lr'。该循环只执行一次。
+
         triplet_sampler = TripletSampler(self.train_source, self.batch_size)
         train_loader = tordata.DataLoader(
             dataset=self.train_source,
@@ -198,23 +206,41 @@ class Model:
 
         train_label_set = list(self.train_source.label_set)
         train_label_set.sort()
+        #训练数据集的label列表。
 
         _time1 = datetime.now()
+        #获取当前系统时间。
+
         for seq, view, seq_type, label, batch_frame in train_loader:
+            #按如前所述，sample_type='random'，
+            # 在collate_fn里seq是1*batch_size*frame_num*64*44的格式。
             self.restore_iter += 1
             self.optimizer.zero_grad()
 
             for i in range(len(seq)):
                 seq[i] = self.np2var(seq[i]).float()
+                #nparray->tensor->Variable。
+                #新版本pytorch中不再鼓励使用Variable，因为tensor内置了require_grad等属性。
+
             if batch_frame is not None:
                 batch_frame = self.np2var(batch_frame).int()
+                #这里只有在sample_type='all'时才生效。
 
             feature, label_prob = self.encoder(*seq, batch_frame)
+            #seq被解包后为batch_size*frame_num*64*44的格式。
+            #batch_frame为None。
+            #feature形状为batch_size*62*256。
+            #label_prob是None。
 
             target_label = [train_label_set.index(l) for l in label]
+            #得出当前batch数据的label在整个训练集label的位置下标。
             target_label = self.np2var(np.array(target_label)).long()
+            #同样转换为Variable。
 
             triplet_feature = feature.permute(1, 0, 2).contiguous()
+            #转置后形状为62*batch_size*256，
+            # 转置后在内存中连续化。
+
             triplet_label = target_label.unsqueeze(0).repeat(triplet_feature.size(0), 1)
             (full_loss_metric, hard_loss_metric, mean_dist, full_loss_num
              ) = self.triplet_loss(triplet_feature, triplet_label)

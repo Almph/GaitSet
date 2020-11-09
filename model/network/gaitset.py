@@ -10,6 +10,7 @@ class SetNet(nn.Module):
         super(SetNet, self).__init__()
         self.hidden_dim = hidden_dim
         self.batch_frame = None
+        #传进来的隐藏层数为256。
 
         _set_in_channels = 1
         _set_channels = [32, 64, 128]
@@ -33,6 +34,7 @@ class SetNet(nn.Module):
             nn.Parameter(
                 nn.init.xavier_uniform_(
                     torch.zeros(sum(self.bin_num) * 2, 128, hidden_dim)))])
+        #自设全连接层，三维参数矩阵为62*128*256。
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.Conv1d)):
@@ -70,7 +72,10 @@ class SetNet(nn.Module):
 
     def forward(self, silho, batch_frame=None):
         # n: batch_size, s: frame_num, k: keypoints_num, c: channel
+        #传进来的silho也就是外部的*seq，形状为batch_size*frame_num*64*44。
+
         if batch_frame is not None:
+            #采样方式为'all'时才不能为None。
             batch_frame = batch_frame[0].data.cpu().numpy().tolist()
             _ = len(batch_frame)
             for i in range(len(batch_frame)):
@@ -83,8 +88,13 @@ class SetNet(nn.Module):
             if frame_sum < silho.size(1):
                 silho = silho[:, :frame_sum, :, :]
             self.batch_frame = [0] + np.cumsum(batch_frame).tolist()
+        
         n = silho.size(0)
+        #batch_size=128。
         x = silho.unsqueeze(2)
+        #batch_size*frame_num*1*64*44。
+        #虽然都是五维数据，但在网络的SetBlock模块内，
+        # 会将前两个维度合并，然后做卷积操作，最后再复原n和s维度。
         del silho
 
         x = self.set_layer1(x)
@@ -113,8 +123,11 @@ class SetNet(nn.Module):
             z = z.mean(3) + z.max(3)[0]
             feature.append(z)
         feature = torch.cat(feature, 2).permute(2, 0, 1).contiguous()
+        #此时的形状为62*batch_size*128。
 
         feature = feature.matmul(self.fc_bin[0])
+        #此时的形状为62*batch_size*256。
         feature = feature.permute(1, 0, 2).contiguous()
+        #batch_size*62*256。
 
         return feature, None

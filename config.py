@@ -18,6 +18,7 @@ conf = {
         'hard_or_full_trip': 'full',
         'batch_size': (8, 16),
         'restore_iter': 0,
+        #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
         'total_iter': 80000,
         'margin': 0.2,
         'num_workers': 3,

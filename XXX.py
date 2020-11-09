@@ -1,5 +1,8 @@
 import numpy as np
 import xarray as xr
+import torch
+from datetime import datetime
+
 # a='a.npy'
 # b=[1,2,3]
 # np.save(a, b)
@@ -24,7 +27,16 @@ import xarray as xr
 # a=[[j] for j in range(3)]
 # print(a)
 
-a=np.random.rand(3, 2, 2)
-b=np.pad(a, ((0, 2),(0, 0),(0, 0)), 'constant', constant_values=0)
-print(b.shape)
-print(b)
+# a=np.random.rand(3, 2, 2)
+# b=np.pad(a, ((0, 2),(0, 0),(0, 0)), 'constant', constant_values=0)
+# print(b.shape)
+# print(b)
+
+# a=torch.nn.Linear(3, 4)
+# b=torch.optim.Adam([{'params': a.parameters()}], lr = 0.001)
+# for q in b.param_groups:
+#     # print(type(q['params'][0]))
+#     print('>>>', q)
+
+a=datetime.now()
+print(a)

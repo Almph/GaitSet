@@ -47,6 +47,7 @@ def initialize_model(config, train_source, test_source):
 
     batch_size = int(np.prod(model_config['batch_size']))
     #用于计算batch_size[0]*batch_size[1]的值，128。
+    #这里计算的乘积仅用于存储模型名称。
 
     model_param['save_name'] = '_'.join(map(str,[
         model_config['model_name'],
@@ -65,7 +66,7 @@ def initialize_model(config, train_source, test_source):
 
     print("Model initialization complete.")
     return m, model_param['save_name']
-    #返回模型和模型名称。
+    #返回模型和模型的保存名称。
 
 
 def initialization(config, train=False, test=False):
