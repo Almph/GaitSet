@@ -46,3 +46,35 @@ import cv2
 # print(a)
 # b=torch.max(a, 1)
 # print(b[0])
+
+# a=torch.rand(2, 3, 4)
+# print(a.shape)
+# print(a.size())
+# print(a.size(0))
+# b=np.random.rand(5, 6, 7)
+# print(b.shape)
+# print(b.shape[0])
+# print(b.size)
+
+# a=torch.rand(2,3,4)
+# b=a.view(-1)
+# c=a.tolist()
+# print(b)
+# print(c)
+
+# a=np.random.rand(2,3,4)
+# #b=a.view(-1)
+# c=a.tolist()
+# #print(b)
+# print(c)
+
+# a=torch.randint(0,1, size=(2,2))
+# b=a+2
+# print(b)
+
+a=torch.randint(3,10, size=(2,3,3)).view(-1)
+b=torch.randint(0,2, size=(2,3,3)).byte().view(-1)
+print(a)
+print(b)
+c=torch.masked_select(a, b).view(2,3,-1)
+print(c)

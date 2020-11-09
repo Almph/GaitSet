@@ -248,7 +248,7 @@ class Model:
             (full_loss_metric, hard_loss_metric, mean_dist, full_loss_num
              ) = self.triplet_loss(triplet_feature, triplet_label)
             #传进去的triplet_feature是62*batch_size*256，triplet_label是62*batch_size。
-            
+
             if self.hard_or_full_trip == 'hard':
                 loss = hard_loss_metric.mean()
             elif self.hard_or_full_trip == 'full':
@@ -260,6 +260,7 @@ class Model:
             self.dist_list.append(mean_dist.mean().data.cpu().numpy())
 
             if loss > 1e-9:
+                #当损失低于或等于1e-9时，将不进行BP。
                 loss.backward()
                 self.optimizer.step()
 
