@@ -12,6 +12,7 @@ class SetNet(nn.Module):
         self.batch_frame = None
         #传进来的隐藏层数为256。
 
+        #set分支处理五维数据，即frame_num维度不为0。
         _set_in_channels = 1
         _set_channels = [32, 64, 128]
         self.set_layer1 = SetBlock(BasicConv2d(_set_in_channels, _set_channels[0], 5, padding=2))
@@ -21,6 +22,7 @@ class SetNet(nn.Module):
         self.set_layer5 = SetBlock(BasicConv2d(_set_channels[1], _set_channels[2], 3, padding=1))
         self.set_layer6 = SetBlock(BasicConv2d(_set_channels[2], _set_channels[2], 3, padding=1))
 
+        #gl分支（MGP）处理四维数据，没有frame_num维度。
         _gl_in_channels = 32
         _gl_channels = [64, 128]
         self.gl_layer1 = BasicConv2d(_gl_in_channels, _gl_channels[0], 3, padding=1)
@@ -49,6 +51,7 @@ class SetNet(nn.Module):
     def frame_max(self, x):
         if self.batch_frame is None:
             return torch.max(x, 1)
+            #多帧取最大，也就是最白最亮的点。
         else:
             _tmp = [
                 torch.max(x[:, self.batch_frame[i]:self.batch_frame[i + 1], :, :, :], 1)
@@ -110,24 +113,35 @@ class SetNet(nn.Module):
 
         x = self.set_layer5(x)
         x = self.set_layer6(x)
+
         x = self.frame_max(x)[0]
+        #这是最后一次SP操作。
         gl = gl + x
+        #这是最后一次MGP操作。
 
         feature = list()
         n, c, h, w = gl.size()
+        
         for num_bin in self.bin_num:
             z = x.view(n, c, num_bin, -1)
+            #h*w依次可以被1,2,4,8,16整除。
             z = z.mean(3) + z.max(3)[0]
+            #依次为n*c*(1,2,4,8,16)。
             feature.append(z)
             z = gl.view(n, c, num_bin, -1)
             z = z.mean(3) + z.max(3)[0]
             feature.append(z)
+            #依次亦为n*c*(1,2,4,8,16)。
+
         feature = torch.cat(feature, 2).permute(2, 0, 1).contiguous()
         #此时的形状为62*batch_size*128。
 
         feature = feature.matmul(self.fc_bin[0])
+        #Separate_FC层，但不像图里画的，31和31分开，实际上是一个隔着一个。
         #此时的形状为62*batch_size*256。
+
         feature = feature.permute(1, 0, 2).contiguous()
         #batch_size*62*256。
+        #相当于一个人的一个数据（一个序列）被整合成一个62*256的数组了。
 
         return feature, None

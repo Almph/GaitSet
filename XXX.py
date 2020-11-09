@@ -2,6 +2,7 @@ import numpy as np
 import xarray as xr
 import torch
 from datetime import datetime
+import cv2
 
 # a='a.npy'
 # b=[1,2,3]
@@ -38,5 +39,10 @@ from datetime import datetime
 #     # print(type(q['params'][0]))
 #     print('>>>', q)
 
-a=datetime.now()
-print(a)
+# a=datetime.now()
+# print(a)
+
+# a=torch.randint(0, 10, size=(1, 2, 1, 2, 2))
+# print(a)
+# b=torch.max(a, 1)
+# print(b[0])

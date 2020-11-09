@@ -7,7 +7,9 @@ class TripletLoss(nn.Module):
     def __init__(self, batch_size, hard_or_full, margin):
         super(TripletLoss, self).__init__()
         self.batch_size = batch_size
+        #这里传进来的是128，是batch_size的两个元素相乘的结果。
         self.margin = margin
+        #超参。
 
     def forward(self, feature, label):
         # feature: [n, m, d], label: [n, m]

@@ -125,6 +125,7 @@ class DataSet(tordata.Dataset):
                       if osp.isfile(osp.join(file_path, _img_path))]
         #[nparray(64*64), nparray(64*64), ..., nparray(64*64)]
         #每个nparray(64*64)是一帧。
+        #cv2.imread读出来的图片是H*W*C。
 
         num_list = list(range(len(frame_list)))
         #当前序列的长度。

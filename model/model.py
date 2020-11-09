@@ -234,6 +234,7 @@ class Model:
 
             target_label = [train_label_set.index(l) for l in label]
             #得出当前batch数据的label在整个训练集label的位置下标。
+            #长度为batch_size=128，值从0-71（005没有姓名）。
             target_label = self.np2var(np.array(target_label)).long()
             #同样转换为Variable。
 
@@ -242,8 +243,12 @@ class Model:
             # 转置后在内存中连续化。
 
             triplet_label = target_label.unsqueeze(0).repeat(triplet_feature.size(0), 1)
+            #62*128（batch_size）。
+
             (full_loss_metric, hard_loss_metric, mean_dist, full_loss_num
              ) = self.triplet_loss(triplet_feature, triplet_label)
+            #传进去的triplet_feature是62*batch_size*256，triplet_label是62*batch_size。
+            
             if self.hard_or_full_trip == 'hard':
                 loss = hard_loss_metric.mean()
             elif self.hard_or_full_trip == 'full':
