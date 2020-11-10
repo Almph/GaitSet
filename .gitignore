@@ -3,4 +3,3 @@ work/checkpoint/
 *.ptm
 *.npy
 .vscode/
-*.pyc
