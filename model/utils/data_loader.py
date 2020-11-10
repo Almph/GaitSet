@@ -63,8 +63,9 @@ def load_data(dataset_path, resolution, dataset, pid_num, pid_shuffle, cache=Tru
         np.save(pid_fname, pid_list)
         #把[['000', '001', ..., '073'], ['074', '075', ..., '124']]保存进文件partition/CASIA-B_73_False.npy里。
 
-    pid_list = np.load(pid_fname)
+    pid_list = np.load(pid_fname, allow_pickle=True)
     #如果分好的列表已经存好了，则直接加载。
+    #这里需要设置allow_pickle=True。
 
     train_list = pid_list[0]
     #['001', '002', ..., '073']。

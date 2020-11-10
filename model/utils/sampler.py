@@ -17,7 +17,7 @@ class TripletSampler(tordata.sampler.Sampler):
                 list(self.dataset.label_set),
                 self.batch_size[0])
                 #label_set中没有重复元素
-                #每次抽出诸如8个人。
+                #每次抽出诸如8个不同的人。
             for pid in pid_list:
                 _index = self.dataset.index_dict.loc[pid, :, :].values
                 #取出这某个人所有的数据。

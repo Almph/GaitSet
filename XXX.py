@@ -72,9 +72,18 @@ import cv2
 # b=a+2
 # print(b)
 
-a=torch.randint(3,10, size=(2,3,3)).view(-1)
-b=torch.randint(0,2, size=(2,3,3)).byte().view(-1)
-print(a)
-print(b)
-c=torch.masked_select(a, b).view(2,3,-1)
-print(c)
+# a=torch.randint(3,10, size=(2,3,3)).view(-1)
+# b=torch.randint(0,2, size=(2,3,3)).bool().view(-1)
+# print(a)
+# print(b)
+# c=torch.masked_select(a, b).view(2,3,-1)
+# print(c)
+
+# a=torch.randint(0,3, size=(3,3))
+# b=(a != 0)
+# print(b)
+# print(b.sum())
+
+# a=torch.tensor(0.)
+# b=torch.tensor(0.)
+# print(a/b)

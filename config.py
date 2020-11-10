@@ -1,8 +1,8 @@
 conf = {
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+    "CUDA_VISIBLE_DEVICES": "4",
     "data": {
-        'dataset_path': "your_dataset_path",
+        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-B/silhouettes/",
         'resolution': '64',
         'dataset': 'CASIA-B',
         # In CASIA-B, data of subject #5 is incomplete.
@@ -15,11 +15,14 @@ conf = {
     "model": {
         'hidden_dim': 256,
         'lr': 1e-4,
-        'hard_or_full_trip': 'full',
-        'batch_size': (8, 16),
+        'hard_or_full_trip': 'hard',
+        #默认为full。
+        'batch_size': (4, 8),
+        #默认为(8, 16)。
         'restore_iter': 0,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
-        'total_iter': 80000,
+        'total_iter': 100,
+        #默认为80000。
         'margin': 0.2,
         'num_workers': 3,
         'frame_num': 30,
