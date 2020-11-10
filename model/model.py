@@ -230,7 +230,7 @@ class Model:
             #seq被解包后为batch_size*frame_num*64*44的格式。
             #batch_frame为None。
             #feature形状为batch_size*62*256。
-            #label_prob是None。
+            #label_prob是None
 
             target_label = [train_label_set.index(l) for l in label]
             #得出当前batch数据的label在整个训练集label的位置下标。
@@ -248,6 +248,10 @@ class Model:
             (full_loss_metric, hard_loss_metric, mean_dist, full_loss_num
              ) = self.triplet_loss(triplet_feature, triplet_label)
             #传进去的triplet_feature是62*batch_size*256，triplet_label是62*batch_size。
+            #返回值的形状依次为62*bs[1]*(bs[1]*(bs[0]-1))，
+            # 62*batch_size，
+            # 62维的向量，和
+            # 62*bs[1]*(bs[1]*(bs[0]-1))。
 
             if self.hard_or_full_trip == 'hard':
                 loss = hard_loss_metric.mean()
