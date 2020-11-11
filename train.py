@@ -20,4 +20,5 @@ m = initialization(conf, train=opt.cache)[0]
 
 print("Training START")
 m.fit()
+#迭代训练给定次数。
 print("Training COMPLETE")

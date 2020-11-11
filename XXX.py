@@ -87,3 +87,12 @@ import cv2
 # a=torch.tensor(0.)
 # b=torch.tensor(0.)
 # print(a/b)
+
+# a=torch.rand(2,3)
+# b=a.mean()
+# print(b)
+# print(b.mean())
+
+a=torch.rand(2,3)
+b=np.mean(np.asarray(a))
+print(b)

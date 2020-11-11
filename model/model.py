@@ -248,8 +248,8 @@ class Model:
             (full_loss_metric, hard_loss_metric, mean_dist, full_loss_num
              ) = self.triplet_loss(triplet_feature, triplet_label)
             #传进去的triplet_feature是62*batch_size*256，triplet_label是62*batch_size。
-            #返回值的形状依次为62*bs[1]*(bs[1]*(bs[0]-1))，
-            # 62*batch_size，
+            #返回值的形状依次为62*bs[1]*(bs[1]*(bs[0]-1))，其实是平均值full_loss_metric_mean，
+            # 62*batch_size，其实是平均值hard_loss_metric_mean，
             # 62维的向量，和
             # 62*bs[1]*(bs[1]*(bs[0]-1))。
 
@@ -262,6 +262,7 @@ class Model:
             self.full_loss_metric.append(full_loss_metric.mean().data.cpu().numpy())
             self.full_loss_num.append(full_loss_num.mean().data.cpu().numpy())
             self.dist_list.append(mean_dist.mean().data.cpu().numpy())
+            #最后存的都是单个标量的平均数。
 
             if loss > 1e-9:
                 #当损失低于或等于1e-9时，将不进行BP。
@@ -271,9 +272,11 @@ class Model:
             if self.restore_iter % 1000 == 0:
                 print(datetime.now() - _time1)
                 _time1 = datetime.now()
+                #每1000个iter报告一次所用时间。
 
             if self.restore_iter % 100 == 0:
                 self.save()
+                #保存的模型参数和优化器参数。
                 print('iter {}:'.format(self.restore_iter), end='')
                 print(', hard_loss_metric={0:.8f}'.format(np.mean(self.hard_loss_metric)), end='')
                 print(', full_loss_metric={0:.8f}'.format(np.mean(self.full_loss_metric)), end='')
@@ -282,11 +285,16 @@ class Model:
                 print(', mean_dist={0:.8f}'.format(self.mean_dist), end='')
                 print(', lr=%f' % self.optimizer.param_groups[0]['lr'], end='')
                 print(', hard or full=%r' % self.hard_or_full_trip)
+                #上面打成一句话，以空格分离。
+                #取100个iter里平均距离的平均值。
                 sys.stdout.flush()
+                #实际上没有清空输出屏幕。
+
                 self.hard_loss_metric = []
                 self.full_loss_metric = []
                 self.full_loss_num = []
                 self.dist_list = []
+                #清空前一百个iter存储的信息。
 
             # Visualization using t-SNE
             # if self.restore_iter % 500 == 0:
@@ -309,6 +317,7 @@ class Model:
 
     def transform(self, flag, batch_size=1):
         self.encoder.eval()
+        #显然，这个方法只在测试时调用。
         source = self.test_source if flag == 'test' else self.train_source
         self.sample_type = 'all'
         data_loader = tordata.DataLoader(
