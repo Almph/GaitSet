@@ -93,6 +93,9 @@ import cv2
 # print(b)
 # print(b.mean())
 
-a=torch.rand(2,3)
-b=np.mean(np.asarray(a))
-print(b)
+# a=torch.rand(2,3)
+# b=np.mean(np.asarray(a))
+# print(b)
+
+# a=np.load('a.npy')
+# print(a)
