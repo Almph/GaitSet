@@ -3,6 +3,7 @@ import xarray as xr
 import torch
 from datetime import datetime
 import cv2
+import sys
 
 # a='a.npy'
 # b=[1,2,3]
@@ -99,3 +100,8 @@ import cv2
 
 # a=np.load('a.npy')
 # print(a)
+
+# sys.stdout.write("stdout1")
+# sys.stderr.write("stderr1")
+# sys.stdout.write("stdout2")
+# sys.stderr.write("stderr2")
