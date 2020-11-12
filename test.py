@@ -5,6 +5,7 @@ import argparse
 from model.initialization import initialization
 from model.utils import evaluation
 from config import conf
+#所以import命令也可以导入变量。
 
 
 def boolean_string(s):
@@ -16,6 +17,7 @@ def boolean_string(s):
 parser = argparse.ArgumentParser(description='Test')
 parser.add_argument('--iter', default='80000', type=int,
                     help='iter: iteration of the checkpoint to load. Default: 80000')
+                    #指定该参数，以指定从第几个iteration的checkpoint加载模型参数进行测试。
 parser.add_argument('--batch_size', default='1', type=int,
                     help='batch_size: batch size for parallel test. Default: 1')
 parser.add_argument('--cache', default=False, type=boolean_string,
@@ -37,11 +39,20 @@ m = initialization(conf, test=opt.cache)[0]
 # load model checkpoint of iteration opt.iter
 print('Loading the model of iteration %d...' % opt.iter)
 m.load(opt.iter)
+#加载给定iter的模型参数。
+
 print('Transforming...')
 time = datetime.now()
 test = m.transform('test', opt.batch_size)
+#opt.batch_size默认是1。
+#返回的test变量依次为：
+# feature，数据总量*(62*255)，nparray，
+# view_list, seq_type_list, label_list。
+
 print('Evaluating...')
 acc = evaluation(test, conf['data'])
+#evaluation使用的cuda_dist函数没有被显式导入，却没有报错。
+
 print('Evaluation complete. Cost:', datetime.now() - time)
 
 # Print rank-1 accuracy of the best model

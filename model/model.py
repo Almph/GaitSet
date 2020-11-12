@@ -86,8 +86,9 @@ class Model:
         #平均距离？
 
         self.sample_type = 'all'
-        #采样类型为all。
-        #这里是默认为all，但后面实际训练时又设为random。
+        #这里是默认为all，
+        #训练时设为'random'。
+        #测试时在.transform()方法里又设为'all'。
 
     def collate_fn(self, batch):
         batch_size = len(batch)
@@ -135,6 +136,7 @@ class Model:
         else:
             #采样模式为'all'时。
             gpu_num = min(torch.cuda.device_count(), batch_size)
+            #事实上这里只在测试时发生，而测试时bs=1。
             batch_per_gpu = math.ceil(batch_size / gpu_num)
             #每个gpu上的batch数量。
             batch_frames = [[
@@ -190,7 +192,7 @@ class Model:
 
         self.encoder.train()
         self.sample_type = 'random'
-        #采样方法设为random。
+        #训练时采样方法强制定为random。
         #这个参数不允许从外部修改，所以是指定使用random采样。
 
         for param_group in self.optimizer.param_groups:
@@ -230,7 +232,7 @@ class Model:
             #seq被解包后为batch_size*frame_num*64*44的格式。
             #batch_frame为None。
             #feature形状为batch_size*62*256。
-            #label_prob是None
+            #label_prob是None。
 
             target_label = [train_label_set.index(l) for l in label]
             #得出当前batch数据的label在整个训练集label的位置下标。
@@ -318,14 +320,22 @@ class Model:
     def transform(self, flag, batch_size=1):
         self.encoder.eval()
         #显然，这个方法只在测试时调用。
+        #传入的参数依次是字符串'flag'，整数1。
+
         source = self.test_source if flag == 'test' else self.train_source
+        #该参数是一个数据集。
+
         self.sample_type = 'all'
+        #这里又强制限定采样方法为'all'。
+
         data_loader = tordata.DataLoader(
             dataset=source,
             batch_size=batch_size,
             sampler=tordata.sampler.SequentialSampler(source),
             collate_fn=self.collate_fn,
             num_workers=self.num_workers)
+        #数据集用测试集，使用顺序采样，bs为1，分配函数使用自定函数。
+        #注意采样器是需要输入具体的数据集的，用来调用该数据集的.__len__()方法。
 
         feature_list = list()
         view_list = list()
@@ -333,19 +343,39 @@ class Model:
         label_list = list()
 
         for i, x in enumerate(data_loader):
+            #一次只获取一个的数据，共有test_label*11*10个数据。
             seq, view, seq_type, label, batch_frame = x
+            #seqs是1*gpu_num*max_sum_frame*64*44。
+            #因为sample_type变为'all'，这里batch_frame不为None。
+            #batch_frame长度为gpu数量，每个元素是一个列表，长度为batch_per_gpu，存着一张gpu上所有数据的帧数。
+            ##[[45, 56, ..., 64], [], ..., []]，其实是一个nparray。
+            #当最后一张gpu上的数据数量不够一个batch时，batch_frame[-1]长度仍为batch_per_gpu，缺的数据用帧数为0补齐。
+            #可以参考self.collate_fn里的注释。
+            #因为设定了batch_size=1，所以gpu_num=1,max_sum_frame=frame_num，
+            #但注意，这里的frame_num是当前数据的所有帧数，而非手动指定的30（config里的）。
+
             for j in range(len(seq)):
                 seq[j] = self.np2var(seq[j]).float()
+                #seq长度为1。
             if batch_frame is not None:
                 batch_frame = self.np2var(batch_frame).int()
-            # print(batch_frame, np.sum(batch_frame))
+            #上面两个操作将data_loader里取出的内容从nparray转为Variable。
+            #print(batch_frame, np.sum(batch_frame))。
 
             feature, _ = self.encoder(*seq, batch_frame)
+            #bs*62*256，其中bs=1。
             n, num_bin, _ = feature.size()
+
             feature_list.append(feature.view(n, -1).data.cpu().numpy())
+            #把提出来的特征每个数据拉成一条向量并存入这个列表。
             view_list += view
             seq_type_list += seq_type
             label_list += label
+            #这里的view，seq_type和label都是存着一个元素的列表，对应这当前数据的view等属性。
+
+            # print('view:', view)#for test
+            # print('seq_type:', seq_type)#for test
+            # print('label:', label)#for test
 
         return np.concatenate(feature_list, 0), view_list, seq_type_list, label_list
 

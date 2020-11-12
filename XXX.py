@@ -4,6 +4,8 @@ import torch
 from datetime import datetime
 import cv2
 import sys
+import os
+#from config import conf
 
 # a='a.npy'
 # b=[1,2,3]
@@ -105,3 +107,5 @@ import sys
 # sys.stderr.write("stderr1")
 # sys.stdout.write("stdout2")
 # sys.stderr.write("stderr2")
+
+# print(conf)
