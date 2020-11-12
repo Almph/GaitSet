@@ -109,3 +109,19 @@ import os
 # sys.stderr.write("stderr2")
 
 # print(conf)
+
+# a=np.random.randint(0,10,size=(5,5))
+# print(a)
+# print(a.sort(1))
+# print(a)
+# print(a[1])
+
+# a=np.random.rand(10)
+# print(a.shape)
+# b=np.reshape(a, [-1, 1])
+# print(b.shape)
+
+a=torch.randint(0,10,size=(5,5))
+print(a)
+print(a.sort(1))
+print(a)
