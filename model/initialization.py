@@ -85,6 +85,7 @@ def initialization(config, train=False, test=False):
     os.environ["CUDA_VISIBLE_DEVICES"] = config["CUDA_VISIBLE_DEVICES"]
     #环境的显卡数量。
     train_source, test_source = initialize_data(config, train, test)
-    #data按照train=True进行初始化。
-    #两个数据集的.data方法都存好了所有需要的数据。
+    #数据集按照cache=True进行初始化。
+    #训练时train_source.data存好了所有需要的数据。
+    #测试时test_source.data存好了所有需要的数据。
     return initialize_model(config, train_source, test_source)

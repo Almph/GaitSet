@@ -3,16 +3,16 @@ conf = {
     "WORK_PATH": "./work",
     "CUDA_VISIBLE_DEVICES": "4,5",
     "data": {
-        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/",
+        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/",
         #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
         #OUMVLP: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/"
         'resolution': '64',
-        'dataset': 'CASIA-B',
+        'dataset': 'OUMVLP',
         # In CASIA-B, data of subject #5 is incomplete.
         # Thus, we ignore it in training.
         # For more detail, please refer to
         # function: utils.data_loader.load_data
-        'pid_num': 73,
+        'pid_num': 5153,
         #ST: 24
         #MT: 62
         #LT: 73
@@ -28,8 +28,9 @@ conf = {
         #默认为(8, 16)。
         'restore_iter': 0,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
-        'total_iter': 100,
-        #CASIA-B为80000。
+        'total_iter': 1000,
+        #CASIA-B: 80000。
+        #OUMVLP: 250000。
         'margin': 0.2,
         'num_workers': 3,
         'frame_num': 30,
@@ -37,4 +38,4 @@ conf = {
         'model_name': 'GaitSet',
     },
 }
-#这个配置只适合读取图片格式，pk格式的配置打算写到另一个分支，因为要改动data_set。
+#这个版本改动了data_set.__loader__()，用于读取pk文件。
