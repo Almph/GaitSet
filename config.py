@@ -1,19 +1,18 @@
 conf = {
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "0,1,3,4",
+    "CUDA_VISIBLE_DEVICES": "4,5",
     "data": {
-        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/",
-        #这里把CASIA-B改成OUMVLP即可更换为另一个数据集。
+        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-B/silhouettes/",
         'resolution': '64',
-        'dataset': 'OUMVLP',
-        #'CASIA-B'或'OUMVLP'。
+        'dataset': 'CASIA-B',
         # In CASIA-B, data of subject #5 is incomplete.
         # Thus, we ignore it in training.
         # For more detail, please refer to
         # function: utils.data_loader.load_data
-        'pid_num': 5153,
-        #CASIA-B：73
-        #OUMVLP：5153
+        'pid_num': 73,
+        #ST: 24
+        #MT: 62
+        #LT: 73
         'pid_shuffle': False,
     },
     "model": {
@@ -21,13 +20,12 @@ conf = {
         'lr': 1e-4,
         'hard_or_full_trip': 'full',
         #默认为full。
-        'batch_size': (2, 4),
+        'batch_size': (4, 8),
         #默认为(8, 16)。
         'restore_iter': 0,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
         'total_iter': 2500,
         #CASIA-B为80000。
-        #OUMVLP为250000。
         'margin': 0.2,
         'num_workers': 3,
         'frame_num': 30,
@@ -35,3 +33,4 @@ conf = {
         'model_name': 'GaitSet',
     },
 }
+#这个配置只适合读取图片格式，pk格式的配置打算写到另一个分支，因为要改动data_set。

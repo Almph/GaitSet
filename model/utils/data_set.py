@@ -56,6 +56,7 @@ class DataSet(tordata.Dataset):
             _view = self.view[i]
             self.index_dict.loc[_label, _seq_type, _view] = i
         #生成一个下标字典。
+        print('DataSet define done.')#for test
 
     def load_all_data(self):
         for i in range(self.data_size):
@@ -117,6 +118,15 @@ class DataSet(tordata.Dataset):
     def img2xarray(self, file_path):
         imgs = sorted(list(os.listdir(file_path)))
         #['000', '001', '002', ..., '']长度不定。
+
+        #for test:
+        for i in imgs:
+            fi=osp.join(file_path, i)
+            print('img_path:', fi)
+            if osp.isfile(fi):
+                cv2imread=cv2.imread(fi)
+                print(cv2imread.shape)
+        #end test.
 
         frame_list = [np.reshape(
             cv2.imread(osp.join(file_path, _img_path)),

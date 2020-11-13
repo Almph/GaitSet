@@ -5,6 +5,7 @@ from datetime import datetime
 import cv2
 import sys
 import os
+import pickle
 #from config import conf
 
 # a='a.npy'
@@ -121,7 +122,19 @@ import os
 # b=np.reshape(a, [-1, 1])
 # print(b.shape)
 
-a=torch.randint(0,10,size=(5,5))
-print(a)
-print(a.sort(1))
-print(a)
+# a=torch.randint(0,10,size=(5,5))
+# print(a)
+# print(a.sort(1))
+# print(a)
+
+# a=np.load('work/partition/OUMVLP_5153_False.npy', allow_pickle=True)
+# print(len(a[1]))
+
+# a='/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/00001/00/000/'
+# os.chdir(a)
+# b=os.listdir(a)
+# c=b[0]
+# with open(c, 'rb') as f:
+#     d=pickle.load(f)
+# print(d.shape)
+
