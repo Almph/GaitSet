@@ -55,16 +55,24 @@ acc = evaluation(test, conf['data'])
 
 print('Evaluation complete. Cost:', datetime.now() - time)
 
+
+#下面测试的部分是只适用于CASIA-B的，需要修改。
+
+
+
 # Print rank-1 accuracy of the best model
 # e.g.
 # ===Rank-1 (Include identical-view cases)===
 # NM: 95.405,     BG: 88.284,     CL: 72.041
+print('Current dataset: ', conf['data']['dataset'])
 for i in range(1):
     print('===Rank-%d (Include identical-view cases)===' % (i + 1))
-    print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
-        np.mean(acc[0, :, :, i]),
-        np.mean(acc[1, :, :, i]),
-        np.mean(acc[2, :, :, i])))
+    for j in range(acc.shape[0]):
+        print('type %d: %.3f' % (j, np.mean(acc[j, :, :, i])))
+    # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
+    #     np.mean(acc[0, :, :, i]),
+    #     np.mean(acc[1, :, :, i]),
+    #     np.mean(acc[2, :, :, i])))
 
 # Print rank-1 accuracy of the best model，excluding identical-view cases
 # e.g.
@@ -72,10 +80,12 @@ for i in range(1):
 # NM: 94.964,     BG: 87.239,     CL: 70.355
 for i in range(1):
     print('===Rank-%d (Exclude identical-view cases)===' % (i + 1))
-    print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
-        de_diag(acc[0, :, :, i]),
-        de_diag(acc[1, :, :, i]),
-        de_diag(acc[2, :, :, i])))
+    for j in range(acc.shape[0]):
+        print('type %d: %.3f' % (j, de_diag(acc[j, :, :, i])))
+    # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
+    #     de_diag(acc[0, :, :, i]),
+    #     de_diag(acc[1, :, :, i]),
+    #     de_diag(acc[2, :, :, i])))
 
 # Print rank-1 accuracy of the best model (Each Angle)
 # e.g.
@@ -86,6 +96,8 @@ for i in range(1):
 np.set_printoptions(precision=2, floatmode='fixed')
 for i in range(1):
     print('===Rank-%d of each angle (Exclude identical-view cases)===' % (i + 1))
-    print('NM:', de_diag(acc[0, :, :, i], True))
-    print('BG:', de_diag(acc[1, :, :, i], True))
-    print('CL:', de_diag(acc[2, :, :, i], True))
+    for j in range(acc.shape[0]):
+        print('type %d:'%(j), de_diag(acc[j, :, :, i], True)))
+    # print('NM:', de_diag(acc[0, :, :, i], True))
+    # print('BG:', de_diag(acc[1, :, :, i], True))
+    # print('CL:', de_diag(acc[2, :, :, i], True))

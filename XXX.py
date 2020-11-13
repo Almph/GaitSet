@@ -6,6 +6,7 @@ import cv2
 import sys
 import os
 import pickle
+from config import conf
 #from config import conf
 
 # a='a.npy'
@@ -139,6 +140,12 @@ import pickle
 #     d=pickle.load(f)
 # print(d.shape)
 
-a='CASIA'
-b='datapath/CASIA-B/label/ect.'
-print(a in b)
+# a='CASIA'
+# b='datapath/CASIA-B/label/ect.'
+# print(a in b)
+
+# a=np.random.rand(5,5)
+# b=np.mean(a)
+# print(b)
+
+# print(conf['data']['dataset'])
