@@ -130,7 +130,8 @@ import pickle
 # a=np.load('work/partition/OUMVLP_5153_False.npy', allow_pickle=True)
 # print(len(a[1]))
 
-# a='/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/00001/00/000/'
+# a='/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/00001/01/090/'
+# #a='/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/001/bg-01/000/'
 # os.chdir(a)
 # b=os.listdir(a)
 # c=b[0]
@@ -138,3 +139,6 @@ import pickle
 #     d=pickle.load(f)
 # print(d.shape)
 
+a='CASIA'
+b='datapath/CASIA-B/label/ect.'
+print(a in b)

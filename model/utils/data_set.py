@@ -56,7 +56,6 @@ class DataSet(tordata.Dataset):
             _view = self.view[i]
             self.index_dict.loc[_label, _seq_type, _view] = i
         #生成一个下标字典。
-        print('DataSet define done.')#for test
 
     def load_all_data(self):
         for i in range(self.data_size):
@@ -66,11 +65,32 @@ class DataSet(tordata.Dataset):
         return self.__getitem__(index)
 
     def __loader__(self, path):
-        return self.img2xarray(
-            path)[:, :, self.cut_padding:-self.cut_padding].astype(
-            'float32') / 255.0
-            #序列长度*64*44，
-            #数据类型被转换为32位浮点数。
+        #下面的代码选自双流网络的.__loader__()部分。
+        #这里path形如'your_data_path/002/bg-02/018'。
+        file_path = osp.join(path, os.listdir(path)[0])
+        with open(file_path, 'rb') as f:
+            seq = pickle.load(f)
+        #读取对应的pk文件，里面存着一系列silhouette
+        
+        data_type = seq.attrs['data_type']
+        #xarrary中的元属性
+        #没有很大的意义，主要是标明一些属性，增加可读性，attr本身是一个字典
+        
+        if data_type == 'img':
+            seq = seq.astype('float32')
+            seq /= 255.0
+            if  'CASIA' in file_path:
+                #CASIA-B的pk文件读出来图片尺寸没有切好，要再切一下。
+                seq = seq[:,:,10:54]
+            #从pickle读出来的数据是uint8，最大255，这里进行了归一化。
+
+        return seq
+
+        # return self.img2xarray(
+        #     path)[:, :, self.cut_padding:-self.cut_padding].astype(
+        #     'float32') / 255.0
+        #     #序列长度*64*44，
+        #     #数据类型被转换为32位浮点数。
 
     def __getitem__(self, index):
         # pose sequence sampling
@@ -115,39 +135,31 @@ class DataSet(tordata.Dataset):
         return data, frame_set, self.view[
             index], self.seq_type[index], self.label[index],
 
-    def img2xarray(self, file_path):
-        imgs = sorted(list(os.listdir(file_path)))
-        #['000', '001', '002', ..., '']长度不定。
+    # def img2xarray(self, file_path):
+    #     imgs = sorted(list(os.listdir(file_path)))
+    #     #在这个加载pickle的版本里，这个函数用不到。
+    #     #['000', '001', '002', ..., '']长度不定。
 
-        #for test:
-        for i in imgs:
-            fi=osp.join(file_path, i)
-            print('img_path:', fi)
-            if osp.isfile(fi):
-                cv2imread=cv2.imread(fi)
-                print(cv2imread.shape)
-        #end test.
+    #     frame_list = [np.reshape(
+    #         cv2.imread(osp.join(file_path, _img_path)),
+    #         [self.resolution, self.resolution, -1])[:, :, 0]
+    #                   for _img_path in imgs
+    #                   if osp.isfile(osp.join(file_path, _img_path))]
+    #     #[nparray(64*64), nparray(64*64), ..., nparray(64*64)]
+    #     #每个nparray(64*64)是一帧。
+    #     #cv2.imread读出来的图片是nparrary类型，形状是H*W*C，数据类型是int8。
 
-        frame_list = [np.reshape(
-            cv2.imread(osp.join(file_path, _img_path)),
-            [self.resolution, self.resolution, -1])[:, :, 0]
-                      for _img_path in imgs
-                      if osp.isfile(osp.join(file_path, _img_path))]
-        #[nparray(64*64), nparray(64*64), ..., nparray(64*64)]
-        #每个nparray(64*64)是一帧。
-        #cv2.imread读出来的图片是nparrary类型，形状是H*W*C，数据类型是int8。
+    #     num_list = list(range(len(frame_list)))
+    #     #当前序列的长度。
+    #     #元素是整数。
 
-        num_list = list(range(len(frame_list)))
-        #当前序列的长度。
-        #元素是整数。
+    #     data_dict = xr.DataArray(
+    #         frame_list,
+    #         coords={'frame': num_list},
+    #         dims=['frame', 'img_y', 'img_x'],
+    #     )
 
-        data_dict = xr.DataArray(
-            frame_list,
-            coords={'frame': num_list},
-            dims=['frame', 'img_y', 'img_x'],
-        )
-
-        return data_dict
+    #     return data_dict
 
     def __len__(self):
         return len(self.label)

@@ -1,8 +1,11 @@
 conf = {
+    #当前版本加载的数据集从pk文件load，所以路径会不同。
     "WORK_PATH": "./work",
     "CUDA_VISIBLE_DEVICES": "4,5",
     "data": {
-        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-B/silhouettes/",
+        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/",
+        #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
+        #OUMVLP: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/"
         'resolution': '64',
         'dataset': 'CASIA-B',
         # In CASIA-B, data of subject #5 is incomplete.
@@ -13,6 +16,7 @@ conf = {
         #ST: 24
         #MT: 62
         #LT: 73
+        #OUMVLP: 5153
         'pid_shuffle': False,
     },
     "model": {
@@ -24,7 +28,7 @@ conf = {
         #默认为(8, 16)。
         'restore_iter': 0,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
-        'total_iter': 2500,
+        'total_iter': 100,
         #CASIA-B为80000。
         'margin': 0.2,
         'num_workers': 3,
