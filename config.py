@@ -1,7 +1,7 @@
 conf = {
     #当前版本加载的数据集从pk文件load，所以路径会不同。
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "4,5",
+    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
     "data": {
         'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/",
         #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
@@ -24,9 +24,9 @@ conf = {
         'lr': 1e-4,
         'hard_or_full_trip': 'full',
         #默认为full。
-        'batch_size': (4, 8),
+        'batch_size': (8, 16),
         #默认为(8, 16)。
-        'restore_iter': 7100,
+        'restore_iter': 13200,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
         'total_iter': 100000,
         #CASIA-B: 80000。
