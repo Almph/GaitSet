@@ -11,7 +11,7 @@ from .model import Model
 
 
 def initialize_data(config, train=False, test=False):
-    #训练和测试两个布尔值必然一真一假。
+    #训练和测试两个布尔值必然一真一假。除非手动指定--cache=False。
     print("Initializing data source...")
     train_source, test_source = load_data(**config['data'], cache=(train or test))
     #双**星号表示把字典解包为key=value的形式传参给函数，要求key和函数的形参名能对应起来。
@@ -31,6 +31,8 @@ def initialize_data(config, train=False, test=False):
     #[[xrarray(nparray(64*44))], [], ..., []]。
     #训练时，把所有训练数据预先加载进数据集train_source.data（显存），
     #测试时，把所有测试数据预先加载进数据集test_source.data（显存）。
+    if not (train or test):
+        print("Skip data caching!")
 
     print("Data initialization complete.")
     return train_source, test_source

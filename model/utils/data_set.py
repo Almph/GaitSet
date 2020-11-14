@@ -28,8 +28,10 @@ class DataSet(tordata.Dataset):
         self.data_size = len(self.label)
         #数据的数量，即一共有多少序列。
 
-        self.data = [None] * self.data_size
-        self.frame_set = [None] * self.data_size
+        if cache:
+            self.data = [None] * self.data_size
+            self.frame_set = [None] * self.data_size
+        #如果数据不缓存的话，这两个属性没有意义，白白占用内存空间。
 
         self.label_set = set(self.label)
         self.seq_type_set = set(self.seq_type)

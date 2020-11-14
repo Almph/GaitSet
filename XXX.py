@@ -7,7 +7,6 @@ import sys
 import os
 import pickle
 from config import conf
-#from config import conf
 
 # a='a.npy'
 # b=[1,2,3]
