@@ -7,6 +7,7 @@ import sys
 import os
 import pickle
 from config import conf
+from torch.utils.tensorboard import SummaryWriter
 
 # a='a.npy'
 # b=[1,2,3]
@@ -148,3 +149,10 @@ from config import conf
 # print(b)
 
 # print(conf['data']['dataset'])
+
+LogPath='./tblog'
+writer = SummaryWriter(LogPath)
+a=torch.rand(10)
+for epoch in range(10):
+    writer.add_scalar('random', a[epoch], epoch)
+writer.close()

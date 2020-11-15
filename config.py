@@ -26,9 +26,9 @@ conf = {
         #默认为full。
         'batch_size': (8, 16),
         #默认为(8, 16)。
-        'restore_iter': 13200,
+        'restore_iter': 100000,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
-        'total_iter': 100000,
+        'total_iter': 250000,
         #CASIA-B: 80000。
         #OUMVLP: 250000。
         'margin': 0.2,
