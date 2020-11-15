@@ -29,8 +29,9 @@ def initialize_data(config, train=False, test=False):
         test_source.load_all_data()
     #调用方法.load_all_data()后所有数据被存入.data属性里（是一个五维大列表）。
     #[[xrarray(nparray(64*44))], [], ..., []]。
-    #训练时，把所有训练数据预先加载进数据集train_source.data（显存），
-    #测试时，把所有测试数据预先加载进数据集test_source.data（显存）。
+    #训练时，把所有训练数据预先加载进数据集train_source.data（内存），
+    #测试时，把所有测试数据预先加载进数据集test_source.data（内存）。
+    
     if not (train or test):
         print("Skip data caching!")
 

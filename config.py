@@ -25,7 +25,8 @@ conf = {
         'hard_or_full_trip': 'full',
         #默认为full。
         'batch_size': (8, 16),
-        #默认为(8, 16)。
+        #CASIA-B默认为(8, 16)。
+        #OUMVLP默认为(32, 16)。
         'restore_iter': 100000,
         #这个参数决定了是否加载checkpoint，以及加载第多少次iteration（类似episode）的checkpoint。
         'total_iter': 250000,

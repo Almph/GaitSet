@@ -150,9 +150,13 @@ from torch.utils.tensorboard import SummaryWriter
 
 # print(conf['data']['dataset'])
 
-LogPath='./tblog'
-writer = SummaryWriter(LogPath)
-a=torch.rand(10)
-for epoch in range(10):
-    writer.add_scalar('random', a[epoch], epoch)
-writer.close()
+# LogPath='./tblog'
+# writer = SummaryWriter(LogPath)
+# a=torch.rand(10)
+# for epoch in range(10):
+#     writer.add_scalar('random', a[epoch], epoch)
+# writer.close()
+
+# a=torch.nn.Conv2d(3,1,3)
+# b=torch.optim.Adam(a.parameters(), lr=0.01)
+# print(b.param_groups[0]['lr'])

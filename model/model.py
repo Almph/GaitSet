@@ -12,9 +12,8 @@ import torch.autograd as autograd
 import torch.optim as optim
 import torch.utils.data as tordata
 
-from .network import TripletLoss, SetNet
+from .network import TripletLoss
 from .utils import TripletSampler
-
 
 class Model:
     def __init__(self,
@@ -33,6 +32,15 @@ class Model:
                  train_source,
                  test_source,
                  img_size=64):
+
+        if 'OUMVLP' in save_name:
+            from .OUMVLP_network import SetNet
+            print('You use OUMVLP_network!')
+            #OUMVLP用这个作为encoder导入。
+        else:
+            from .network import SetNet
+            print('You use CASIA-B_network!')
+            #CASIA-B用这个作为encoder导入。
 
         self.save_name = save_name
         self.train_pid_num = train_pid_num
@@ -270,6 +278,10 @@ class Model:
                 #当损失低于或等于1e-9时，将不进行BP。
                 loss.backward()
                 self.optimizer.step()
+            
+            if self.restore_iter == 150000:
+                self.optimizer.param_groups[0]['lr'] = 1e-5
+                #这里依据论文针对OUMVLP设置，CASIA-B跑不了这么多次迭代。
 
             if self.restore_iter % 1000 == 0:
                 print(datetime.now() - _time1)
