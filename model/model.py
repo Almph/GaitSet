@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.autograd as autograd
 import torch.optim as optim
 import torch.utils.data as tordata
+from torch.utils.tensorboard import SummaryWriter
 
 from .network import TripletLoss
 from .utils import TripletSampler
@@ -35,10 +36,12 @@ class Model:
 
         if 'OUMVLP' in save_name:
             from .OUMVLP_network import SetNet
+            self.writer = SummaryWriter('tensorboardLog/OUMVLP')
             print('You use OUMVLP_network!')
             #OUMVLP用这个作为encoder导入。
         else:
             from .network import SetNet
+            self.writer = SummaryWriter('tensorboardLog/CASIA-B')
             print('You use CASIA-B_network!')
             #CASIA-B用这个作为encoder导入。
 
@@ -291,16 +294,26 @@ class Model:
             if self.restore_iter % 100 == 0:
                 self.save()
                 #保存的模型参数和优化器参数。
-                print('iter {}:'.format(self.restore_iter), end='')
-                print(', hard_loss_metric={0:.8f}'.format(np.mean(self.hard_loss_metric)), end='')
-                print(', full_loss_metric={0:.8f}'.format(np.mean(self.full_loss_metric)), end='')
-                print(', full_loss_num={0:.8f}'.format(np.mean(self.full_loss_num)), end='')
+
+                hlmm=np.mean(self.hard_loss_metric)
+                flmm=np.mean(self.full_loss_metric)
+                flnm=np.mean(self.full_loss_num)
                 self.mean_dist = np.mean(self.dist_list)
+
+                print('iter {}:'.format(self.restore_iter), end='')
+                print(' hard_loss_metric={0:.8f}'.format(hlmm), end='')
+                print(', full_loss_metric={0:.8f}'.format(flmm), end='')
+                print(', full_loss_num={0:.8f}'.format(flnm), end='')
                 print(', mean_dist={0:.8f}'.format(self.mean_dist), end='')
                 print(', lr=%f' % self.optimizer.param_groups[0]['lr'], end='')
                 print(', hard or full=%r' % self.hard_or_full_trip)
                 #上面打成一句话，以空格分离。
                 #取100个iter里平均距离的平均值。
+
+                self.writer.add_scalars('loss', {'hard': hlmm, 'full': flmm}, self.restore_iter)
+                self.writer.add_scalar('mean_dist', self.mean_dist, self.restore_iter)
+                #把训练过程中的重要内容可视化展示。
+
                 sys.stdout.flush()
                 #实际上没有清空输出屏幕。
 
@@ -321,6 +334,7 @@ class Model:
             #     plt.show()
 
             if self.restore_iter == self.total_iter:
+                self.writer.close()
                 break
 
     def ts2var(self, x):

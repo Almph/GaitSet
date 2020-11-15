@@ -34,6 +34,8 @@ See [OUMVLP](#oumvlp) for details.
 - Python 3.6
 - PyTorch 0.4+
 - GPU
+- xarray 0.12
+- tensorboard
 
 
 ## Getting started
