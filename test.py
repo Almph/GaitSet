@@ -65,8 +65,8 @@ print('Batchsize for training: ', conf['model']['batch_size'], file=f)
 print('Loss type: ', conf['model']['hard_or_full_trip'], file=f)
 
 if conf['data']['dataset']=='OUMVLP':
-    print('Raw acc:', file=f)
-    print(acc, file=f)
+    print('Raw acc (only rank-1):', file=f)
+    print(acc[:, :, :, 0], file=f)
 elif conf['data']['dataset']=='CASIA-B':
     # Print rank-1 accuracy of the best model
     # e.g.
