@@ -56,7 +56,8 @@ acc = evaluation(test, conf['data'])
 print('Evaluation complete. Cost:', datetime.now() - time)
 
 
-f=open('work/result.txt', 'a')
+f=open('result.txt', 'a')
+#在初始化模型和数据时已经将工作文件夹切换到work下。
 # Print rank-1 accuracy of the best model
 # e.g.
 # ===Rank-1 (Include identical-view cases)===

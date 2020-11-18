@@ -160,3 +160,8 @@ from torch.utils.tensorboard import SummaryWriter
 # a=torch.nn.Conv2d(3,1,3)
 # b=torch.optim.Adam(a.parameters(), lr=0.01)
 # print(b.param_groups[0]['lr'])
+
+# o=os.path.join('nothing', 'nothing.txt')
+# f=open(o, 'a')
+# f.write('hello')
+# f.close()
