@@ -28,6 +28,7 @@ opt = parser.parse_args()
 
 # Exclude identical-view cases
 def de_diag(acc, each_angle=False):
+    # if conf['data']['dataset']=='CASIA-B':
     result = np.sum(acc - np.diag(np.diag(acc)), 1) / 10.0
     if not each_angle:
         result = np.mean(result)
@@ -52,56 +53,61 @@ test = m.transform('test', opt.batch_size)
 print('Evaluating...')
 acc = evaluation(test, conf['data'])
 #evaluation使用的cuda_dist函数没有被显式导入，却没有报错。
+np.save('acc.npy', acc)
 
 print('Evaluation complete. Cost:', datetime.now() - time)
 
-
 f=open('result.txt', 'a')
 #在初始化模型和数据时已经将工作文件夹切换到work下。
-# Print rank-1 accuracy of the best model
-# e.g.
-# ===Rank-1 (Include identical-view cases)===
-# NM: 95.405,     BG: 88.284,     CL: 72.041
 print('Current dataset: ', conf['data']['dataset'], file=f)
 print('Iter for test: ', opt.iter, file=f)
 print('Batchsize for training: ', conf['model']['batch_size'], file=f)
 print('Loss type: ', conf['model']['hard_or_full_trip'], file=f)
-for i in range(1):
-    print('===Rank-%d (Include identical-view cases)===' % (i + 1), file=f)
-    for j in range(acc.shape[0]):
-        print('type %d: %.3f' % (j, np.mean(acc[j, :, :, i])), file=f)
-    # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
-    #     np.mean(acc[0, :, :, i]),
-    #     np.mean(acc[1, :, :, i]),
-    #     np.mean(acc[2, :, :, i])))
 
-# Print rank-1 accuracy of the best model，excluding identical-view cases
-# e.g.
-# ===Rank-1 (Exclude identical-view cases)===
-# NM: 94.964,     BG: 87.239,     CL: 70.355
-for i in range(1):
-    print('===Rank-%d (Exclude identical-view cases)===' % (i + 1), file=f)
-    for j in range(acc.shape[0]):
-        print('type %d: %.3f' % (j, de_diag(acc[j, :, :, i])), file=f)
-    # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
-    #     de_diag(acc[0, :, :, i]),
-    #     de_diag(acc[1, :, :, i]),
-    #     de_diag(acc[2, :, :, i])))
+if conf['data']['dataset']=='OUMVLP':
+    print('Raw acc:', file=f)
+    print(acc, file=f)
+elif conf['data']['dataset']=='CASIA-B':
+    # Print rank-1 accuracy of the best model
+    # e.g.
+    # ===Rank-1 (Include identical-view cases)===
+    # NM: 95.405,     BG: 88.284,     CL: 72.041
+    for i in range(1):
+        print('===Rank-%d (Include identical-view cases)===' % (i + 1), file=f)
+        for j in range(acc.shape[0]):
+            print('type %d: %.3f' % (j, np.mean(acc[j, :, :, i])), file=f)
+        # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
+        #     np.mean(acc[0, :, :, i]),
+        #     np.mean(acc[1, :, :, i]),
+        #     np.mean(acc[2, :, :, i])))
 
-# Print rank-1 accuracy of the best model (Each Angle)
-# e.g.
-# ===Rank-1 of each angle (Exclude identical-view cases)===
-# NM: [90.80 97.90 99.40 96.90 93.60 91.70 95.00 97.80 98.90 96.80 85.80]
-# BG: [83.80 91.20 91.80 88.79 83.30 81.00 84.10 90.00 92.20 94.45 79.00]
-# CL: [61.40 75.40 80.70 77.30 72.10 70.10 71.50 73.50 73.50 68.40 50.00]
-np.set_printoptions(precision=2, floatmode='fixed')
-for i in range(1):
-    print('===Rank-%d of each angle (Exclude identical-view cases)===' % (i + 1), file=f)
-    for j in range(acc.shape[0]):
-        print('type %d:'%(j), de_diag(acc[j, :, :, i], True), file=f)
-    # print('NM:', de_diag(acc[0, :, :, i], True))
-    # print('BG:', de_diag(acc[1, :, :, i], True))
-    # print('CL:', de_diag(acc[2, :, :, i], True))
+    # Print rank-1 accuracy of the best model，excluding identical-view cases
+    # e.g.
+    # ===Rank-1 (Exclude identical-view cases)===
+    # NM: 94.964,     BG: 87.239,     CL: 70.355
+    for i in range(1):
+        print('===Rank-%d (Exclude identical-view cases)===' % (i + 1), file=f)
+        for j in range(acc.shape[0]):
+            print('type %d: %.3f' % (j, de_diag(acc[j, :, :, i])), file=f)
+        # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
+        #     de_diag(acc[0, :, :, i]),
+        #     de_diag(acc[1, :, :, i]),
+        #     de_diag(acc[2, :, :, i])))
+
+    # Print rank-1 accuracy of the best model (Each Angle)
+    # e.g.
+    # ===Rank-1 of each angle (Exclude identical-view cases)===
+    # NM: [90.80 97.90 99.40 96.90 93.60 91.70 95.00 97.80 98.90 96.80 85.80]
+    # BG: [83.80 91.20 91.80 88.79 83.30 81.00 84.10 90.00 92.20 94.45 79.00]
+    # CL: [61.40 75.40 80.70 77.30 72.10 70.10 71.50 73.50 73.50 68.40 50.00]
+    np.set_printoptions(precision=2, floatmode='fixed')
+    for i in range(1):
+        print('===Rank-%d of each angle (Exclude identical-view cases)===' % (i + 1), file=f)
+        for j in range(acc.shape[0]):
+            print('type %d:'%(j), de_diag(acc[j, :, :, i], True), file=f)
+        # print('NM:', de_diag(acc[0, :, :, i], True))
+        # print('BG:', de_diag(acc[1, :, :, i], True))
+        # print('CL:', de_diag(acc[2, :, :, i], True))
 f.close()
 
 print('Test done! Check the result in the file "work/result.txt".')

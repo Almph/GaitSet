@@ -165,3 +165,6 @@ from torch.utils.tensorboard import SummaryWriter
 # f=open(o, 'a')
 # f.write('hello')
 # f.close()
+
+# a=np.random.randint(2,10,size=(5,5))
+# np.save('abc.npy', a)
