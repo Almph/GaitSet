@@ -108,6 +108,7 @@ elif conf['data']['dataset']=='CASIA-B':
         # print('NM:', de_diag(acc[0, :, :, i], True))
         # print('BG:', de_diag(acc[1, :, :, i], True))
         # print('CL:', de_diag(acc[2, :, :, i], True))
+print('\n', file=f)
 f.close()
 
 print('Test done! Check the result in the file "work/result.txt".')
