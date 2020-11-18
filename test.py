@@ -56,19 +56,19 @@ acc = evaluation(test, conf['data'])
 print('Evaluation complete. Cost:', datetime.now() - time)
 
 
-#下面测试的部分是只适用于CASIA-B的，需要修改。
-
-
-
+f=open('work/result.txt', 'a')
 # Print rank-1 accuracy of the best model
 # e.g.
 # ===Rank-1 (Include identical-view cases)===
 # NM: 95.405,     BG: 88.284,     CL: 72.041
-print('Current dataset: ', conf['data']['dataset'])
+print('Current dataset: ', conf['data']['dataset'], file=f)
+print('Iter for test: ', opt.iter, file=f)
+print('Batchsize for training: ', conf['model']['batch_size'], file=f)
+print('Loss type: ', conf['model']['hard_or_full_trip'], file=f)
 for i in range(1):
-    print('===Rank-%d (Include identical-view cases)===' % (i + 1))
+    print('===Rank-%d (Include identical-view cases)===' % (i + 1), file=f)
     for j in range(acc.shape[0]):
-        print('type %d: %.3f' % (j, np.mean(acc[j, :, :, i])))
+        print('type %d: %.3f' % (j, np.mean(acc[j, :, :, i])), file=f)
     # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
     #     np.mean(acc[0, :, :, i]),
     #     np.mean(acc[1, :, :, i]),
@@ -79,9 +79,9 @@ for i in range(1):
 # ===Rank-1 (Exclude identical-view cases)===
 # NM: 94.964,     BG: 87.239,     CL: 70.355
 for i in range(1):
-    print('===Rank-%d (Exclude identical-view cases)===' % (i + 1))
+    print('===Rank-%d (Exclude identical-view cases)===' % (i + 1), file=f)
     for j in range(acc.shape[0]):
-        print('type %d: %.3f' % (j, de_diag(acc[j, :, :, i])))
+        print('type %d: %.3f' % (j, de_diag(acc[j, :, :, i])), file=f)
     # print('NM: %.3f,\tBG: %.3f,\tCL: %.3f' % (
     #     de_diag(acc[0, :, :, i]),
     #     de_diag(acc[1, :, :, i]),
@@ -101,3 +101,6 @@ for i in range(1):
     # print('NM:', de_diag(acc[0, :, :, i], True))
     # print('BG:', de_diag(acc[1, :, :, i], True))
     # print('CL:', de_diag(acc[2, :, :, i], True))
+f.close()
+
+print('Test done! Check the result in the file "work/result.txt".')
