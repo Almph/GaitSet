@@ -96,9 +96,9 @@ for i in range(1):
 # CL: [61.40 75.40 80.70 77.30 72.10 70.10 71.50 73.50 73.50 68.40 50.00]
 np.set_printoptions(precision=2, floatmode='fixed')
 for i in range(1):
-    print('===Rank-%d of each angle (Exclude identical-view cases)===' % (i + 1))
+    print('===Rank-%d of each angle (Exclude identical-view cases)===' % (i + 1), file=f)
     for j in range(acc.shape[0]):
-        print('type %d:'%(j), de_diag(acc[j, :, :, i], True))
+        print('type %d:'%(j), de_diag(acc[j, :, :, i], True), file=f)
     # print('NM:', de_diag(acc[0, :, :, i], True))
     # print('BG:', de_diag(acc[1, :, :, i], True))
     # print('CL:', de_diag(acc[2, :, :, i], True))
