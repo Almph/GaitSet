@@ -36,6 +36,8 @@ def de_diag(acc, each_angle=False):
 
 
 m = initialization(conf, test=opt.cache)[0]
+#这里没有接收到第二个返回值model_name。
+# print(m)#for test
 
 # load model checkpoint of iteration opt.iter
 print('Loading the model of iteration %d...' % opt.iter)

@@ -8,6 +8,7 @@ import os
 import pickle
 from config import conf
 from torch.utils.tensorboard import SummaryWriter
+import torch.nn as nn
 
 # a='a.npy'
 # b=[1,2,3]
@@ -168,3 +169,14 @@ from torch.utils.tensorboard import SummaryWriter
 
 # a=np.random.randint(2,10,size=(5,5))
 # np.save('abc.npy', a)
+
+# def func(a, b):
+#     return a+b, a-b
+# p=func(10,7)
+# print(p)
+
+# a=nn.ParameterList([
+#             nn.Parameter(
+#                 nn.init.xavier_uniform_(
+#                     torch.zeros(62, 128, 256)))])
+# print(a[0])

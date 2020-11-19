@@ -72,6 +72,7 @@ def initialize_model(config, train_source, test_source):
     #将设置好的参数传入对模型初始化。
 
     print("Model initialization complete.")
+    # print(model_param['save_name'])#for test
     return m, model_param['save_name']
     #返回模型和模型的保存名称。
 
