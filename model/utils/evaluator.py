@@ -47,7 +47,7 @@ def evaluation(data, config):
             for (v1, probe_view) in enumerate(view_list):
                 #例如v1=10, probe_view='180'。
                 for (v2, gallery_view) in enumerate(view_list):
-                    #例如v2=0, probe_view='000'。
+                    #例如v2=0, gallery_view='000'。
                     gseq_mask = np.isin(seq_type, gallery_seq) & np.isin(view, [gallery_view])
                     gallery_x = feature[gseq_mask, :]
                     #取出符合当前gallery_seq和gallery_view的所有数据。
