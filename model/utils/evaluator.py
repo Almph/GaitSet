@@ -58,7 +58,7 @@ def evaluation(data, config):
 
                     pseq_mask = np.isin(seq_type, probe_seq) & np.isin(view, [probe_view])
                     probe_x = feature[pseq_mask, :]
-                    #取出符合当前gallery_seq和gallery_view的所有数据。
+                    #取出符合当前probe_seq和probe_view的所有数据。
                     #n*(62*256)的二维数组。
                     probe_y = label[pseq_mask]
                     #取出上述数据对应的label。
