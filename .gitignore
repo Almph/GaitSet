@@ -4,6 +4,6 @@ work/checkpoint/
 *.npy
 .vscode/
 tblog/
-work/
+work/tensorboardLog/
 .DS_Store
 *.pyc
