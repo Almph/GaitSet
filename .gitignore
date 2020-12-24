@@ -6,3 +6,4 @@ work/checkpoint/
 tblog/
 work/
 .DS_Store
+*.pyc

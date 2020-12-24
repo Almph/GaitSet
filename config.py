@@ -1,7 +1,7 @@
 conf = {
     #当前版本加载的数据集从pk文件load，所以路径会不同。
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+    "CUDA_VISIBLE_DEVICES": "2",
     "data": {
         'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/",
         #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
