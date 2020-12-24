@@ -1,6 +1,6 @@
 conf = {
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "4,5",
+    "CUDA_VISIBLE_DEVICES": "0,1",
     "data": {
         'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-B/silhouettes/",
         'resolution': '64',

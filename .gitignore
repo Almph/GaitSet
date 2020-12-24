@@ -1,5 +1,7 @@
 .idea/
 work/checkpoint/
+work/tensorboardLog/
 *.ptm
 *.npy
 .vscode/
+*.pyc
