@@ -1,7 +1,7 @@
 conf = {
     #当前版本加载的数据集从pk文件load，所以路径会不同。
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "5,6",
+    "CUDA_VISIBLE_DEVICES": "5",
     "data": {
         'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/",
         #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
@@ -24,7 +24,7 @@ conf = {
         'lr': 1e-4,
         'hard_or_full_trip': 'full',
         #默认为full。
-        'batch_size': (8, 16),
+        'batch_size': (4, 8),
         #CASIA-B默认为(8, 16)。
         #OUMVLP默认为(32, 16)。
         'restore_iter': 0,
