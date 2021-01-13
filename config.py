@@ -1,18 +1,18 @@
 conf = {
     #当前版本加载的数据集从pk文件load，所以路径会不同。
     "WORK_PATH": "./work",
-    "CUDA_VISIBLE_DEVICES": "2",
+    "CUDA_VISIBLE_DEVICES": "5,6",
     "data": {
-        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/",
+        'dataset_path': "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/",
         #CASIA-B: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/CASIA-loose/silhouettes/"
         #OUMVLP: "/mnt/pami14/DATASET/GAIT/GaitAligned/64/OUMVLP/silhouettes/"
         'resolution': '64',
-        'dataset': 'OUMVLP',
+        'dataset': 'CASIA-B',
         # In CASIA-B, data of subject #5 is incomplete.
         # Thus, we ignore it in training.
         # For more detail, please refer to
         # function: utils.data_loader.load_data
-        'pid_num': 5153,
+        'pid_num': 73,
         #ST: 24
         #MT: 62
         #LT: 73
@@ -24,7 +24,7 @@ conf = {
         'lr': 1e-4,
         'hard_or_full_trip': 'full',
         #默认为full。
-        'batch_size': (16, 16),
+        'batch_size': (8, 16),
         #CASIA-B默认为(8, 16)。
         #OUMVLP默认为(32, 16)。
         'restore_iter': 0,
